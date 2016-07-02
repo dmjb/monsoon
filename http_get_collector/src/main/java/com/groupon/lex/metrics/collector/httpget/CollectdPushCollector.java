@@ -56,7 +56,6 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -75,10 +74,13 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 
+import lombok.EqualsAndHashCode;
+
 /**
  *
  * @author ariane
  */
+
 public class CollectdPushCollector implements GroupGenerator {
     private static final Logger LOG = Logger.getLogger(CollectdPushCollector.class.getName());
     public static final String API_ENDPOINT_BASE = "/collectd/jsonpush/";
@@ -88,6 +90,7 @@ public class CollectdPushCollector implements GroupGenerator {
     private final static Metric UP_METRIC = new SimpleMetric(NameCache.singleton.newMetricName("up"), Boolean.TRUE);
     private final static Metric DOWN_METRIC = new SimpleMetric(NameCache.singleton.newMetricName("up"), Boolean.FALSE);
 
+    @EqualsAndHashCode
     public static class CollectdKey {
         public final String host, plugin, plugin_instance, type, type_instance;
 
@@ -97,44 +100,6 @@ public class CollectdPushCollector implements GroupGenerator {
             this.plugin_instance = plugin_instance;
             this.type = type;
             this.type_instance = type_instance;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 5;
-            hash = 43 * hash + Objects.hashCode(this.host);
-            hash = 43 * hash + Objects.hashCode(this.plugin);
-            hash = 43 * hash + Objects.hashCode(this.plugin_instance);
-            hash = 43 * hash + Objects.hashCode(this.type);
-            hash = 43 * hash + Objects.hashCode(this.type_instance);
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final CollectdKey other = (CollectdKey) obj;
-            if (!Objects.equals(this.host, other.host)) {
-                return false;
-            }
-            if (!Objects.equals(this.plugin, other.plugin)) {
-                return false;
-            }
-            if (!Objects.equals(this.plugin_instance, other.plugin_instance)) {
-                return false;
-            }
-            if (!Objects.equals(this.type, other.type)) {
-                return false;
-            }
-            if (!Objects.equals(this.type_instance, other.type_instance)) {
-                return false;
-            }
-            return true;
         }
     }
 

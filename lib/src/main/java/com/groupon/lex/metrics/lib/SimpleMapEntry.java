@@ -33,49 +33,30 @@ package com.groupon.lex.metrics.lib;
 
 import java.util.Map;
 import java.util.Objects;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.ToString;
+
 import static java.util.Objects.requireNonNull;
 
 /**
  * Immutable map entry.
  * @author ariane
  */
-public class SimpleMapEntry<K, V> implements Map.Entry<K, V> {
-    private final K key_;
-    private final V value_;
 
-    public SimpleMapEntry(K key, V value) {
-        key_ = requireNonNull(key);
-        value_ = requireNonNull(value);
-    }
+@Data
+public class SimpleMapEntry<K, V> implements Map.Entry<K, V> {
+    @NonNull
+    private final K key;
+    @NonNull
+    private final V value;
 
     public static <K, V> Map.Entry<K, V> create(K key, V value) {
         return new SimpleMapEntry<>(key, value);
     }
 
     @Override
-    public K getKey() { return key_; }
-    @Override
-    public V getValue() { return value_; }
-    @Override
     public V setValue(V value) { throw new UnsupportedOperationException("Can't change simple map entries."); }
-
-    @Override
-    public String toString() {
-        return "SimpleMapEntry{" + key_ + " => " + value_ + '}';
-    }
-
-    @Override
-    public int hashCode() {
-        return (getKey() == null   ? 0 : getKey().hashCode()) ^
-                (getValue() == null ? 0 : getValue().hashCode());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null) return false;
-        if (!(o instanceof Map.Entry)) return false;
-
-        final Map.Entry<?, ?> other = (Map.Entry<?, ?>)o;
-        return Objects.equals(getKey(), other.getKey()) && Objects.equals(getValue(), other.getValue());
-    }
 }
