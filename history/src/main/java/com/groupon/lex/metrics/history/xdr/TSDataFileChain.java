@@ -42,6 +42,8 @@ import java.util.zip.GZIPOutputStream;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import lombok.EqualsAndHashCode;
+
 /**
  * A writeable TSDataFile, that uses multiple underlying files.
  * @author ariane
@@ -51,6 +53,7 @@ public class TSDataFileChain implements TSData {
     public static long MAX_FILESIZE = 64 * 1024 * 1024;
     private final long max_filesize_;
 
+    @EqualsAndHashCode
     public static class Key implements Comparable<Key> {
         private final Path file_;
         private final DateTime begin_;
@@ -73,35 +76,6 @@ public class TSDataFileChain implements TSData {
             if (cmp == 0) cmp = getEnd().compareTo(othr.getEnd());
             if (cmp == 0) cmp = getFile().compareTo(othr.getFile());
             return cmp;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 5;
-            hash = 37 * hash + Objects.hashCode(this.begin_);
-            hash = 37 * hash + Objects.hashCode(this.end_);
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final Key other = (Key) obj;
-            if (!Objects.equals(this.file_, other.file_)) {
-                return false;
-            }
-            if (!Objects.equals(this.begin_, other.begin_)) {
-                return false;
-            }
-            if (!Objects.equals(this.end_, other.end_)) {
-                return false;
-            }
-            return true;
         }
     }
 

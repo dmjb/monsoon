@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.joda.time.DateTime;
 
+import lombok.EqualsAndHashCode;
+
 /**
  * Scan all files in the given directory and retain a list of all files that matched.
  * @author ariane
@@ -26,6 +28,8 @@ public class TSDataScanDir {
     /**
      * Metadata for a given TSData file.
      */
+
+    @EqualsAndHashCode
     public static class MetaData {
         private final short version_minor_, version_major_;
         private final DateTime begin_, end_;
@@ -84,47 +88,6 @@ public class TSDataScanDir {
          */
         public boolean isUpgradable() {
             return !isGzipped() && Const.isUpgradable(getVersionMajor(), getVersionMinor());
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 67 * hash + this.version_minor_;
-            hash = 67 * hash + this.version_major_;
-            hash = 67 * hash + Objects.hashCode(this.begin_);
-            hash = 67 * hash + Objects.hashCode(this.end_);
-            hash = 67 * hash + Objects.hashCode(this.filename_);
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final MetaData other = (MetaData) obj;
-            if (this.version_minor_ != other.version_minor_) {
-                return false;
-            }
-            if (this.version_major_ != other.version_major_) {
-                return false;
-            }
-            if (!Objects.equals(this.begin_, other.begin_)) {
-                return false;
-            }
-            if (!Objects.equals(this.end_, other.end_)) {
-                return false;
-            }
-            if (!Objects.equals(this.filename_, other.filename_)) {
-                return false;
-            }
-            if (!Objects.equals(this.is_gzipped_, other.is_gzipped_)) {
-                return false;
-            }
-            return true;
         }
     }
 

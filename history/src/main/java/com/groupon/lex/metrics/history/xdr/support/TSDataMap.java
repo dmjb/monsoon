@@ -39,10 +39,14 @@ import java.util.stream.Stream;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import lombok.EqualsAndHashCode;
+
 /**
  *
  * @author ariane
  */
+
+@EqualsAndHashCode
 public class TSDataMap<K> implements Map<K, TSData> {
     public final static long DEFAULT_MAX_MMAP;
     public final static long DEFAULT_MAX_FD = 128;
@@ -153,6 +157,7 @@ public class TSDataMap<K> implements Map<K, TSData> {
         }
     }
 
+    @EqualsAndHashCode
     private static class EntryValue {
         private final List<EvictionQueueEntry<?>> evictors_;
         private final AtomicReference<Reference<TSData>> value_;
@@ -180,19 +185,6 @@ public class TSDataMap<K> implements Map<K, TSData> {
             final TSData v = value_.get().get();
             markLost();
             value_.set(new WeakReference<>(v));
-        }
-
-        @Override
-        public int hashCode() {
-            return hash_code_;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == null) return false;
-            if (!(o instanceof EntryValue)) return false;
-            final EntryValue other = (EntryValue)o;
-            return Objects.equals(value_.get(), other.value_.get());
         }
     }
 
@@ -397,31 +389,6 @@ public class TSDataMap<K> implements Map<K, TSData> {
     @Override
     public int size() {
         return data_.size();
-    }
-
-    @Override
-    public int hashCode() {
-        return entrySet().stream().mapToInt(Entry::hashCode).sum();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null) return false;
-        if (!(o instanceof Map)) return false;
-
-        if (o instanceof TSDataMap) {
-            final TSDataMap<?> other = (TSDataMap)o;
-            return Objects.equals(data_, other.data_);
-        } else {
-            final Map<?, ?> other = (Map)o;
-            if (other.size() != size()) return false;
-            return other.entrySet().stream()
-                    .allMatch(o_entry -> {
-                        final EntryValue my_value = data_.get((K)o_entry.getKey());
-                        SoftReference<Object> comparison = new SoftReference<>(o_entry.getValue());
-                        return Objects.equals(my_value.getReference(), comparison);
-                    });
-        }
     }
 
     private EntryValue new_entry_value_(K key, TSData tsd) {

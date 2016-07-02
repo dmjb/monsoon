@@ -7,16 +7,18 @@ import com.groupon.lex.metrics.timeseries.TimeSeriesValue;
 import gnu.trove.map.hash.THashMap;
 import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
-import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.joda.time.DateTime;
 
+@EqualsAndHashCode
 @Value
 public final class ImmutableTimeSeriesValue implements TimeSeriesValue {
     private final DateTime timestamp;
@@ -36,34 +38,6 @@ public final class ImmutableTimeSeriesValue implements TimeSeriesValue {
     @Override
     public TimeSeriesValue clone() {
         return this;  // Immutable class doesn't need copy-clone.
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 59 * hash + Objects.hashCode(getGroup());
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof TimeSeriesValue)) {
-            return false;
-        }
-        final TimeSeriesValue other = (TimeSeriesValue) obj;
-        if (!Objects.equals(this.getTimestamp(), other.getTimestamp())) {
-            return false;
-        }
-        if (!Objects.equals(this.getGroup(), other.getGroup())) {
-            return false;
-        }
-        if (!Objects.equals(this.getMetrics(), other.getMetrics())) {
-            return false;
-        }
-        return true;
     }
 
     private static <T> BinaryOperator<T> throwing_merger_() {
